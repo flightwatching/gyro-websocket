@@ -4,6 +4,6 @@ send accelerometer info to a websocket concentrator to be used in WILCO (demo pu
 Installation
 =======
 
-```npm install --save express@4.10.2```
+```npm install express@4.10.2```
 
-```npm install --save socket.io```
+```npm install socket.io```
