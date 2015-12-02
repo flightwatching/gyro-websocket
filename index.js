@@ -13,6 +13,9 @@ io.on('connection', function(socket){
   socket.on('mousePos', function(msg){
     io.emit('mousePos', msg);
   });
+  socket.on('touchPos', function(msg){
+    console.log(msg);
+  });
 });
 
 

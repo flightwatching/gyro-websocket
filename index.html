@@ -39,6 +39,9 @@
       window.addEventListener('mousemove', function (e) {
         socket.emit('mousePos', JSON.stringify({x:e.x,y:e.y}));
       }, false);
+      window.addEventListener('touchmove', function (e) {
+        socket.emit('touchPos', JSON.stringify(e));
+      }, false);
     </script>
   </body>
 </html>
