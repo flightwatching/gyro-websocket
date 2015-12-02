@@ -10,11 +10,8 @@ io.on('connection', function(socket){
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
   });
-  socket.on('mousePos', function(msg){
-    io.emit('mousePos', msg);
-  });
-  socket.on('touchPos', function(msg){
-    console.log(JSON.parse(msg));
+  socket.on('touch', function(msg){
+    io.emit('touch', msg);
   });
 });
 

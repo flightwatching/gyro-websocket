@@ -32,15 +32,15 @@
         console.log(msg)
         $('#messages').append($('<li>').text(msg));
       });
-      socket.on('mousePos', function(msg){
+      socket.on('touch', function(msg){
         var j = JSON.parse(msg)
-        $('#currentPosition').html(j.x+"-"+j.y);
+        $('#currentPosition').html(j.x+"-"+j.y+"-"+j.rot);
       });
       window.addEventListener('mousemove', function (e) {
-        socket.emit('mousePos', JSON.stringify({x:e.x,y:e.y}));
+        socket.emit('touch', JSON.stringify({x:e.x,y:e.y,rot:0}));
       }, false);
       window.addEventListener('touchmove', function (e) {
-        socket.emit('touchPos', JSON.stringify(e));
+        socket.emit('touch', JSON.stringify({x:e.screenX,y:e.screenY,rot:rotation}));
       }, false);
     </script>
   </body>
