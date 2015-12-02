@@ -42,6 +42,9 @@
       window.addEventListener('touchmove', function (e) {
         socket.emit('touch', JSON.stringify({x:e.screenX,y:e.screenY,rot:rotation}));
       }, false);
+      window.addEventListener('devicemotion', function (e) {
+        socket.emit('devicemotion', JSON.stringify(e));
+      }, false);
     </script>
   </body>
 </html>
