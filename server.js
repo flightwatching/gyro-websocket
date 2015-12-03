@@ -6,6 +6,10 @@ app.get('/', function(req, res){
   res.sendfile('index.html');
 });
 
+app.get('/client.js', function(req, res){
+  res.sendfile('client.js');
+});
+
 io.on('connection', function(socket){
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
@@ -17,7 +21,7 @@ io.on('connection', function(socket){
   //   console.log(JSON.parse(msg));
   // });
   socket.on('deviceorientation', function(msg){
-    console.log(JSON.parse(msg));
+    io.emit('deviceorientation', msg);
   });
 });
 

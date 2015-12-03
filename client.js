@@ -1,5 +1,14 @@
 var socket = io();
-var savedOrientation={alpha:null};
+var savedOrientation={alpha:null, sensor:null};
+
+var sensor = null;
+
+var setSensor = function (leftOrRight) {
+	savedOrientation.sensor = leftOrRight;
+	socket.emit('deviceorientation', JSON.stringify(savedOrientation));
+};
+
+
 $('form').submit(function(){
 	socket.emit('chat message', $('#m').val());
 	$('#m').val('');
@@ -11,12 +20,12 @@ socket.on('chat message', function(msg){
 socket.on('touch', function(msg){
 	$('#currentPosition').html(msg);
 });
-window.addEventListener('mousemove', function (e) {
-	//socket.emit('touch', JSON.stringify({x:e.x,y:e.y,rot:0}));
-}, false);
-window.addEventListener('touchmove', function (e) {
-	//socket.emit('touch', JSON.stringify({x:e.screenX,y:e.screenY,rot:rotation}));
-}, false);
+// window.addEventListener('mousemove', function (e) {
+// 	socket.emit('touch', JSON.stringify({x:e.x,y:e.y,rot:0}));
+// }, false);
+// window.addEventListener('touchmove', function (e) {
+// 	socket.emit('touch', JSON.stringify({x:e.screenX,y:e.screenY,rot:rotation}));
+// }, false);
 // window.addEventListener('devicemotion', function (e) {
 //   socket.emit('devicemotion', JSON.stringify(e));
 // }, false);
