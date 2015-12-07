@@ -8,6 +8,10 @@ var setSensor = function (leftOrRight) {
 	socket.emit('deviceorientation', JSON.stringify(savedOrientation));
 };
 
+var setField = function(key, value) {
+	savedOrientation[key]=value;
+	socket.emit('deviceorientation', JSON.stringify(savedOrientation));
+}
 
 $('form').submit(function(){
 	socket.emit('chat message', $('#m').val());
@@ -20,15 +24,7 @@ socket.on('chat message', function(msg){
 socket.on('touch', function(msg){
 	$('#currentPosition').html(msg);
 });
-// window.addEventListener('mousemove', function (e) {
-// 	socket.emit('touch', JSON.stringify({x:e.x,y:e.y,rot:0}));
-// }, false);
-// window.addEventListener('touchmove', function (e) {
-// 	socket.emit('touch', JSON.stringify({x:e.screenX,y:e.screenY,rot:rotation}));
-// }, false);
-// window.addEventListener('devicemotion', function (e) {
-//   socket.emit('devicemotion', JSON.stringify(e));
-// }, false);
+
 var compareAndReplaceOld = function(newObj, oldObj, precision) {
 	var ret = {hasChanged: false};
 	var cat = "";
@@ -43,9 +39,6 @@ var compareAndReplaceOld = function(newObj, oldObj, precision) {
 			}
 		}
 	}
-	// if (ret.hasChanged) {
-	//   $('#log').html(JSON.stringify(oldObj));
-	// }
 	return ret;
 };
 window.addEventListener('deviceorientation', function (e) {
@@ -54,6 +47,11 @@ window.addEventListener('deviceorientation', function (e) {
 	//   gamma: -0.3371626239283329,
 	//   webkitCompassHeading: 102.759765625,
 	//   webkitCompassAccuracy: 25 }
+	if (e.alpha) {
+		d3.select("#heading").text(("000"+e.webkitCompassHeading.toFixed(0)).slice(-3));
+		d3.select("#pitch").text(e.beta.toFixed(0));
+		d3.select("#roll").text(e.gamma.toFixed(0));
+	}
 	var or = compareAndReplaceOld(e, savedOrientation, 1);
 	if (or.hasChanged) {
 		socket.emit('deviceorientation', JSON.stringify(savedOrientation));

@@ -1,0 +1,21 @@
+
+@font-face {
+  font-family: 'LetoSans-Thin';
+  src: url('https://shared.flightwatching.com/public/fonts/LetoSans-Thin.otf');
+}
+
+
+@font-face {
+  font-family: 'LetoSans-Bold';
+  src: url('https://shared.flightwatching.com/public/fonts/LetoSans-Bold.otf');
+}
+
+@font-face {
+  font-family: 'LetoSans';
+  src: url('https://shared.flightwatching.com/public/fonts/LetoSans.otf');
+}
+
+body {
+  background-color: #333333;
+	font-family: 'LetoSans';
+}

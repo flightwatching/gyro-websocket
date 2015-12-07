@@ -2,8 +2,13 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+
+app.get('/main.css', function(req, res){
+  res.sendfile('main.css');
+});
+
 app.get('/', function(req, res){
-  res.sendfile('index.html');
+  res.sendfile('remote.html');
 });
 
 app.get('/client.js', function(req, res){
