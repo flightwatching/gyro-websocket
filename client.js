@@ -3,6 +3,7 @@ var savedOrientation={alpha:null, sensor:null};
 
 var sensor = null;
 
+
 var setSensor = function (leftOrRight) {
 	savedOrientation.sensor = leftOrRight;
 	socket.emit('deviceorientation', JSON.stringify(savedOrientation));
@@ -11,7 +12,11 @@ var setSensor = function (leftOrRight) {
 var setField = function(key, value) {
 	savedOrientation[key]=value;
 	socket.emit('deviceorientation', JSON.stringify(savedOrientation));
-}
+};
+
+var emitOrientation = _.throttle(function() {
+	socket.emit('deviceorientation', JSON.stringify(savedOrientation));
+}, 40);
 
 $('form').submit(function(){
 	socket.emit('chat message', $('#m').val());
@@ -41,6 +46,35 @@ var compareAndReplaceOld = function(newObj, oldObj, precision) {
 	}
 	return ret;
 };
+
+
+if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(showPosition);
+} else {
+    d3.select("#lat_anim").text("No Geo");
+}
+
+function showPosition(position) {
+	// coords.latitude	The latitude as a decimal number
+	// coords.longitude	The longitude as a decimal number
+	// coords.accuracy	The accuracy of position
+	// coords.altitude	The altitude in meters above the mean sea level
+	// coords.altitudeAccuracy	The altitude accuracy of position
+	// coords.heading	The heading as degrees clockwise from North
+	// coords.speed	The speed in meters per second
+	// timestamp	The date/time of the response
+	d3.select("#lat_anim").text(position.coords.latitude);
+	d3.select("#lon_anim").text(position.coords.longitude);
+	d3.select("#alt_anim").text(position.coords.altitude.toFixed(0));
+	d3.select("#speed_anim").text(position.coords.speed);
+	d3.select("#pos_prec_anim").attr('r', position.coords.accuracy);
+	savedOrientation.lat=position.coords.latitude;
+	savedOrientation.lon=position.coords.longitude;
+	savedOrientation.alt=position.coords.altitude;
+	savedOrientation.speed=position.coords.speed;
+	savedOrientation.acc=position.coords.accuracy;
+}
+
 window.addEventListener('deviceorientation', function (e) {
 	// { alpha: 321.7861149626408,
 	//   beta: 1.1175007911558708,
@@ -54,6 +88,7 @@ window.addEventListener('deviceorientation', function (e) {
 	}
 	var or = compareAndReplaceOld(e, savedOrientation, 1);
 	if (or.hasChanged) {
-		socket.emit('deviceorientation', JSON.stringify(savedOrientation));
+		emitOrientation();
+		//socket.emit('deviceorientation', JSON.stringify(savedOrientation));
 	}
 }, false);
