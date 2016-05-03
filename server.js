@@ -1,6 +1,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var log = require('util');
 
 
 app.get('/main.css', function(req, res){
@@ -35,7 +36,7 @@ function generateSimu() {
 
 io.on('connection', function(socket) {
   status.connectCounter++;
-  console.info ("we have "+status.connectCounter+" users")
+  log.log ("we have "+status.connectCounter+" users")
   if (!started) {
     socket.on('touch', function(msg){
       io.emit('touch', msg);
@@ -46,14 +47,14 @@ io.on('connection', function(socket) {
     started = true;
   }
   if (!simuStarted) {
-    console.info("starting simu because we have users");
+    log.log("starting simu because we have users");
     simuStarted=true;
     generateSimu();
   }
   socket.on('disconnect', function() {
     status.connectCounter--;
     if (status.connectCounter<=0) {
-      console.info("Stopping simu because no more users");
+      log.log("Stopping simu because no more users");
       simuStarted=false;
     }
   });
