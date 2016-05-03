@@ -17,13 +17,16 @@ app.get('/client.js', function(req, res){
 
 var started=false;
 var simuStarted = false;
-var status = {connectCounter:0, i:0};
+var status = {connectCounter:0, i:0, a:0, b:0, c:0};
 
 function generateSimu() {
   if (!simuStarted)
     return;
   var val = JSON.stringify(status);
-  status.i++;
+  var i = (status.i++)*Math.PI/180;
+  status.a=10*Math.sin(i)+Math.random()*0.5;
+  status.b=10*Math.cos(i)+Math.random()*0.5;
+  status.c=Math.sqrt(i)+Math.random()*0.5;
   io.emit('simu', val);
   var generateSimuThread = setTimeout(generateSimu,1000);
 }
