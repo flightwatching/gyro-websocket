@@ -16,7 +16,6 @@ app.get('/client.js', function(req, res){
   res.sendfile('client.js');
 });
 
-var started=false;
 var simuStarted = false;
 var status = {connectCounter:0, i:0, a:0, b:0, c:0};
 
@@ -36,16 +35,14 @@ function generateSimu() {
 
 io.on('connection', function(socket) {
   status.connectCounter++;
-  log.log ("we have "+status.connectCounter+" users")
-  if (!started) {
-    socket.on('touch', function(msg){
-      io.emit('touch', msg);
-    });
-    socket.on('deviceorientation', function(msg){
-      io.emit('deviceorientation', msg);
-    });
-    started = true;
-  }
+  log.log ("we have "+status.connectCounter+" users");
+  log.log("starting deviceorientation");
+  // socket.on('touch', function(msg){
+  //   io.emit('touch', msg);
+  // });
+  socket.on('deviceorientation', function(msg){
+    io.emit('deviceorientation', msg);
+  });
   if (!simuStarted) {
     log.log("starting simu because we have users");
     simuStarted=true;
