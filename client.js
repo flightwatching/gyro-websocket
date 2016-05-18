@@ -16,7 +16,7 @@ var setField = function(key, value) {
 
 var emitOrientation = _.throttle(function() {
 	socket.emit('deviceorientation', JSON.stringify(savedOrientation));
-}, 40);
+}, 50);
 
 $('form').submit(function(){
 	socket.emit('chat message', $('#m').val());
@@ -30,6 +30,23 @@ socket.on('touch', function(msg){
 	$('#currentPosition').html(msg);
 });
 
+
+// {
+//  "gyro": {
+//   "alpha": "40.6",
+//   "sensor": null,
+//   "beta": "0.2",
+//   "gamma": "-0.4",
+//   "webkitCompassHeading": "260.8",
+//   "webkitCompassAccuracy": "25.0",
+//   "lat": 43.63396481062827,
+//   "lon": 1.3739950980362494,
+//   "alt": 151.8798828125,
+//   "speed": null,
+//   "acc": 65,
+//   "mode": "C"
+//  }
+// }
 var compareAndReplaceOld = function(newObj, oldObj, precision) {
 	var ret = {hasChanged: false};
 	var cat = "";
@@ -44,6 +61,13 @@ var compareAndReplaceOld = function(newObj, oldObj, precision) {
 			}
 		}
 	}
+	oldObj.alpha=newObj.alpha.toFixed(0);
+	oldObj.beta=newObj.beta.toFixed(2);
+	oldObj.gamma=newObj.gamma.toFixed(2);
+	// oldObj.webkitCompassHeading=newObj.webkitCompassHeading;
+	// oldObj.webkitCompassAccuracy=newObj.webkitCompassAccuracy;
+	oldObj.acc=newObj.acc;
+	ret.hasChanged=true;
 	return ret;
 };
 
@@ -75,20 +99,31 @@ function showPosition(position) {
 	savedOrientation.acc=position.coords.accuracy;
 }
 
-window.addEventListener('deviceorientation', function (e) {
+
+window.addEventListener('devicemotion', function (evt) {
+	savedOrientation.x=evt.acceleration.x.toFixed(1);
+	savedOrientation.y=evt.acceleration.y.toFixed(1);
+	savedOrientation.z=evt.acceleration.z.toFixed(1);
+	emitOrientation();
+}, false);
+
+window.addEventListener('deviceorientation', function (evt) {
 	// { alpha: 321.7861149626408,
 	//   beta: 1.1175007911558708,
 	//   gamma: -0.3371626239283329,
 	//   webkitCompassHeading: 102.759765625,
 	//   webkitCompassAccuracy: 25 }
-	if (e.alpha) {
-		d3.select("#heading").text(("000"+e.webkitCompassHeading.toFixed(0)).slice(-3));
-		d3.select("#pitch").text(e.beta.toFixed(0));
-		d3.select("#roll").text(e.gamma.toFixed(0));
+	if (evt.alpha) {
+		var wkCompass = evt.webkitCompassHeading || 0;
+		d3.select("#heading").text(("000"+wkCompass).slice(-3));
+		var wkbeta = evt.beta || 0;
+		d3.select("#pitch").text(wkbeta.toFixed(0));
+		var wkgamma = evt.gamma || 0;
+		d3.select("#roll").text(wkgamma.toFixed(0));
 	}
-	var or = compareAndReplaceOld(e, savedOrientation, 1);
-	if (or.hasChanged) {
-		emitOrientation();
-		//socket.emit('deviceorientation', JSON.stringify(savedOrientation));
-	}
+	savedOrientation.alpha=evt.alpha.toFixed(0);
+	savedOrientation.beta=evt.beta.toFixed(2);
+	savedOrientation.gamma=evt.gamma.toFixed(2);
+	savedOrientation.acc=evt.acc;
+	emitOrientation();
 }, false);
